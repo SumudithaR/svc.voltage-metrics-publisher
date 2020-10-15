@@ -39,6 +39,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        voltagemetricspublisher=voltagemetricspublisher:main
+        voltagemetricspublisher=voltagemetricspublisher.main:main
     ''',
 )
