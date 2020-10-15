@@ -8,7 +8,7 @@ class ExtractionService():
     def __init__(self):
         self.vref = 3.3  
         
-    def getGpioValues(self) -> RawMetricDto:
+    def getGpioValues(self)-> RawMetricDto:
         adc0 = MCP3008(channel=0)
         adc1 = MCP3008(channel=1)
         adc2 = MCP3008(channel=2)
