@@ -2,7 +2,6 @@ from ..core.version import get_version
 import threading
 from ..services.extractionService import ExtractionService
 from ..services.kafkaService import KafkaService
-import click_config_file
 import configparser
 
 VERSION_BANNER = """Console Application to publish Voltage Metrics to Kafka. %s """ % (get_version(),)
