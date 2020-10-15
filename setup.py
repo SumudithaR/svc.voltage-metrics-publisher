@@ -29,14 +29,14 @@ from setuptools import setup, find_packages
 #     """,
 # )
 
+REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
+
 setup(
     name='voltagemetricspublisher',
     version='1.0.0',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-        'Click',
-    ],
+    install_requires=REQUIREMENTS,
     entry_points='''
         [console_scripts]
         voltagemetricspublisher=voltagemetricspublisher.main:main
