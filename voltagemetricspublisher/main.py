@@ -8,7 +8,7 @@ class VoltageMetricsPublisher():
 
     def __enter__(self):
         config = configparser.ConfigParser()
-        config.read('../../config/voltagemetricspublisher.ini')
+        config.read('../config/voltagemetricspublisher.ini')
         self.debug = config["app"]["debug"]
         return self
 
