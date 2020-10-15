@@ -1,6 +1,7 @@
 import configparser
 from .core.exc import VoltageMetricsPublisherError
 from .controllers.voltageMetrics import VoltageMetrics
+import click
 
 class VoltageMetricsPublisher():
     """Voltage Metrics Publisher primary application."""
@@ -18,6 +19,7 @@ class VoltageMetricsPublisher():
         VoltageMetrics().start()
         return self
 
+@click.command()
 def main():
     with VoltageMetricsPublisher() as app:
         try:
@@ -40,5 +42,5 @@ def main():
                 traceback.print_exc()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

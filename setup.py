@@ -18,7 +18,10 @@ setup(
     url='https://github.com/SumudithaR/svc.voltage-metrics-publisher',
     license='Apache License 2.0',
     packages=find_packages(exclude=['ez_setup', 'tests*']),
-    package_data={'voltagemetricspublisher': ['templates/*']},
+    #package_data={'voltagemetricspublisher': ['templates/*']},
+    install_requires=[
+        'Click',
+    ],
     include_package_data=True,
     entry_points="""
         [console_scripts]
