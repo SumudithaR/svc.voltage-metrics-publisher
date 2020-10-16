@@ -1,5 +1,5 @@
-from ..core.version import get_version
 import threading
+from ..core.version import get_version
 from ..services.extractionService import ExtractionService
 from ..services.kafkaService import KafkaService
 import configparser
@@ -34,6 +34,6 @@ class VoltageMetrics():
     def start(self):
         """Starting Voltage Metrics Publish."""
         threading.Timer(1.0, self.start).start()
-
+        
         extractedMetrics = self.extractionService.getGpioValues()
         self.kafkaService.publishToTopic(self.config["kafka_settings"]["topic_name"], extractedMetrics)

@@ -41,4 +41,5 @@ setup(
         [console_scripts]
         voltagemetricspublisher=voltagemetricspublisher.main:main
     ''',
+    package_data={'voltagemetricspublisher': ['config/*']}
 )
