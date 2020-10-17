@@ -1,3 +1,4 @@
+import os
 from configparser import ConfigParser
 from .core.exc import VoltageMetricsPublisherError
 from .controllers.voltageMetrics import VoltageMetrics
@@ -8,9 +9,8 @@ class VoltageMetricsPublisher():
 
     def __enter__(self):
         config = ConfigParser()
-        config.read('./config/voltagemetricspublisher.ini')
-        print(config.sections())
-        self.debug = False
+        config.read(os.path.join(os.path.dirname(__file__), 'config', 'voltagemetricspublisher.ini'))
+        self.debug = config["app"]["debug"]
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

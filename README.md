@@ -3,6 +3,15 @@
 ## Installation
 
 ```
+python setup.py clean --all
+
+python setup.py install
+
+voltagemetricspublisher
+
+```
+
+```
 $ pip install -r requirements.txt
 
 $ python setup.py install

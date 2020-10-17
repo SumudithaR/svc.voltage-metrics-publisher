@@ -9,6 +9,9 @@ class ExtractionService():
         self.vref = 3.3  
         
     def getGpioValues(self):
+        
+        print("Getting GPIO Values.")
+        
         adc0 = MCP3008(channel=0)
         adc1 = MCP3008(channel=1)
         adc2 = MCP3008(channel=2)

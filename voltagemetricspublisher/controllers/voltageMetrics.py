@@ -32,7 +32,7 @@ class VoltageMetrics():
 
     
     def start(self):
-        """Starting Voltage Metrics Publish."""
+        print("Starting Voltage Metrics Publish.")
         threading.Timer(1.0, self.start).start()
         
         extractedMetrics = self.extractionService.getGpioValues()
