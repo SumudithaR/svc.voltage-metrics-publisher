@@ -83,6 +83,9 @@ while True:
             model.deviceTime = localtime
 
             rawVoltageMetricsTopic = kafkaClient.topics[topicName]
+            
+            print("1")
+            print(rawVoltageMetricsTopic)
 
             if rawVoltageMetricsTopic is None:
                 kafkaClient.topics._create_topic(topicName)
