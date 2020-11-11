@@ -9,9 +9,11 @@ class KafkaService():
         kafkaHost = self.config["kafka_settings"]["host"]
         
         try: 
+            print("Starting Kafka Service.")
             
+            print("Kafka Host: %s" % kafkaHost)
             self.kafkaClient = KafkaClient(hosts=kafkaHost) 
-            
+
             if self.kafkaClient is None:
                 print("Failed to instantiate Kafka Client.")
 
@@ -19,6 +21,7 @@ class KafkaService():
 
             print('Failed to connect to Kafka Host. Host: %s' % kafkaHost)
             print(ex)
+            raise ex
     
     def publishToTopic(self, topicName, item):
         
