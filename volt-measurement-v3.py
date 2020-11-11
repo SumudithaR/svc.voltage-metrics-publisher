@@ -35,7 +35,7 @@ except Exception as ex:
     print("[ControlSystemOne] Failed to connect to Kafka Host.")
     print(ex)
 
-def start(self):
+def start():
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
