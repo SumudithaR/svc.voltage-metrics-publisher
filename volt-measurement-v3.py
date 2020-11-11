@@ -5,8 +5,8 @@ import time
 # import datetime
 from gpiozero import MCP3008  # Installed in GAM 13/09/2019.
 from time import sleep       #
+import threading
 #
-
 
 class RawMetricDto():
     voltage0 = 0
@@ -24,17 +24,17 @@ vref = 3.31
 topicName = "raw-voltage-metrics"
 
 try:
-    print("[ControlSystemOne]Starting Kafka Service.")
-    kafkaClient = KafkaClient(hosts='walpola.tk:9092')
+    print("[ControlSystemOne] Starting Kafka Service.")
+    kafkaClient = KafkaClient(hosts='walpola.tk:9094')
 
     if kafkaClient is None:
-        print("[ControlSystemOne]Failed to instantiate Kafka Client.")
+        print("[ControlSystemOne] Failed to instantiate Kafka Client.")
 
 except Exception as ex:
-    print("[ControlSystemOne]Failed to connect to Kafka Host.")
+    print("[ControlSystemOne] Failed to connect to Kafka Host.")
     print(ex)
 
-while True:
+def start(self):
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -68,7 +68,7 @@ while True:
     # Metrics Publisher
     try:
         if kafkaClient is not None:
-            print("[ControlSystemOne]Starting Voltage Metrics Publish.")
+            print("[ControlSystemOne] Starting Voltage Metrics Publish.")
 
             model = RawMetricDto()
 
@@ -84,9 +84,6 @@ while True:
 
             rawVoltageMetricsTopic = kafkaClient.topics[topicName]
             
-            print("1")
-            print(rawVoltageMetricsTopic)
-
             if rawVoltageMetricsTopic is None:
                 kafkaClient.topics._create_topic(topicName)
                 rawVoltageMetricsTopic = kafkaClient.topics[topicName]
@@ -103,9 +100,10 @@ while True:
                 print(jsonBytes)
 
                 producer.produce(jsonBytes)
+                print("[ControlSystemOne] Metrics Publish Complete.")
 
     except Exception as ex:
-        print("[ControlSystemOne]Failed to publish Volt Metrics.")
+        print("[ControlSystemOne] Failed to publish Volt Metrics.")
         print(ex)
 
-    sleep(30)
+threading.Timer(30.0, start).start()
