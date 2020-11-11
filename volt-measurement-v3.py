@@ -19,7 +19,6 @@ class RawMetricDto():
     voltage7 = 0
     deviceTime = None
 
-
 vref = 3.31
 topicName = "raw-voltage-metrics"
 kafkaClient = None
@@ -35,7 +34,8 @@ except Exception as ex:
     print("[ControlSystemOne] Failed to connect to Kafka Host.")
     print(ex)
 
-def start():
+def run():
+    threading.Timer(30.0, run).start()
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -89,14 +89,14 @@ def start():
                 kafkaClient.topics._create_topic(topicName)
                 rawVoltageMetricsTopic = kafkaClient.topics[topicName]
 
-            with rawVoltageMetricsTopic.get_sync_producer() as producer:
+            with rawVoltageMetricsTopic.get_sync_producer(ack_timeout_ms=30000) as producer:
                 jsonModel = json.dumps(model.__dict__)
                 jsonBytes = bytes(jsonModel, 'utf-8')
                 producer.produce(jsonBytes)
                 print("[ControlSystemOne] Metrics Publish Complete.")
-
+                
     except Exception as ex:
         print("[ControlSystemOne] Failed to publish Volt Metrics.")
         print(ex)
 
-threading.Timer(30.0, start).start()
+run()
