@@ -32,7 +32,7 @@ try:
 
 except Exception as ex:
     print("[ControlSystemOne]Failed to connect to Kafka Host.")
-    print('[ControlSystemOne]%s' % ex)
+    print(ex)
 
 while True:
 
@@ -94,6 +94,6 @@ while True:
 
     except Exception as ex:
         print("[ControlSystemOne]Failed to publish Volt Metrics.")
-        print('[ControlSystemOne]%s' % ex)
+        print(ex)
 
     sleep(30)
