@@ -34,7 +34,7 @@ except Exception as ex:
     print("[ControlSystemOne] Failed to connect to Kafka Host.")
     print(ex)
 
-def start(self):
+def start(self, kafkaClient, topicName):
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -106,4 +106,4 @@ def start(self):
         print("[ControlSystemOne] Failed to publish Volt Metrics.")
         print(ex)
 
-threading.Timer(30.0, start).start()
+threading.Timer(30.0, start(kafkaClient, topicName)).start()
