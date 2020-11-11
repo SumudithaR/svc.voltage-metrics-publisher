@@ -88,7 +88,7 @@ while True:
                 rawVoltageMetricsTopic = kafkaClient.topics[topicName]
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
-                producer.produce(model)
+                producer.produce(bytes(model))
 
     except Exception as ex:
         print('Failed to connect to Kafka Host.')
