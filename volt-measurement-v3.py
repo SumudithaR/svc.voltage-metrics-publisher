@@ -91,15 +91,7 @@ def start():
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
                 jsonModel = json.dumps(model.__dict__)
-
-                print("jsonModel")
-                print(jsonModel)
-
                 jsonBytes = bytes(jsonModel, 'utf-8')
-                
-                print("jsonBytes")
-                print(jsonBytes)
-
                 producer.produce(jsonBytes)
                 print("[ControlSystemOne] Metrics Publish Complete.")
 
