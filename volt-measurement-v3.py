@@ -89,7 +89,7 @@ while True:
                 rawVoltageMetricsTopic = kafkaClient.topics[topicName]
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
-                jsonModel = json.dumps(model)
+                jsonModel = json.dumps(model.__dict__)
                 producer.produce(bytes(jsonModel))
 
     except Exception as ex:
