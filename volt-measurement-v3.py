@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from pykafka import KafkaClient, Topic
+import json
 import time
 # import datetime
 from gpiozero import MCP3008  # Installed in GAM 13/09/2019.
@@ -23,15 +24,15 @@ vref = 3.31
 topicName = "raw-voltage-metrics"
 
 try:
-    print("Starting Kafka Service.")
+    print("[ControlSystemOne]Starting Kafka Service.")
     kafkaClient = KafkaClient(hosts='walpola.tk:9092')
 
     if kafkaClient is None:
-        print("Failed to instantiate Kafka Client.")
+        print("[ControlSystemOne]Failed to instantiate Kafka Client.")
 
 except Exception as ex:
-    print('Failed to connect to Kafka Host.')
-    print(ex)
+    print("[ControlSystemOne]Failed to connect to Kafka Host.")
+    print("[ControlSystemOne]" + ex)
 
 while True:
 
@@ -67,7 +68,7 @@ while True:
     # Metrics Publisher
     try:
         if kafkaClient is not None:
-            print("Starting Voltage Metrics Publish.")
+            print("[ControlSystemOne]Starting Voltage Metrics Publish.")
 
             model = RawMetricDto()
 
@@ -88,10 +89,11 @@ while True:
                 rawVoltageMetricsTopic = kafkaClient.topics[topicName]
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
-                producer.produce(bytes(model))
+                jsonModel = json.dumps(model)
+                producer.produce(bytes(jsonModel))
 
     except Exception as ex:
-        print('Failed to connect to Kafka Host.')
-        print(ex)
+        print("[ControlSystemOne]Failed to publish Volt Metrics.")
+        print("[ControlSystemOne]" + ex)
 
     sleep(30)
