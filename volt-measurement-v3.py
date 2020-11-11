@@ -32,7 +32,7 @@ try:
 
 except Exception as ex:
     print("[ControlSystemOne]Failed to connect to Kafka Host.")
-    print("[ControlSystemOne]" + ex)
+    print('[ControlSystemOne]%s' % ex)
 
 while True:
 
@@ -90,10 +90,10 @@ while True:
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
                 jsonModel = json.dumps(model.__dict__)
-                producer.produce(bytes(jsonModel))
+                producer.produce(bytes(jsonModel), 'utf-8')
 
     except Exception as ex:
         print("[ControlSystemOne]Failed to publish Volt Metrics.")
-        print("[ControlSystemOne]" + ex)
+        print('[ControlSystemOne]%s' % ex)
 
     sleep(30)
