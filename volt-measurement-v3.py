@@ -22,6 +22,7 @@ class RawMetricDto():
 
 vref = 3.31
 topicName = "raw-voltage-metrics"
+kafkaClient = None
 
 try:
     print("[ControlSystemOne] Starting Kafka Service.")
@@ -34,7 +35,7 @@ except Exception as ex:
     print("[ControlSystemOne] Failed to connect to Kafka Host.")
     print(ex)
 
-def start(self, kafkaClient, topicName):
+def start(self):
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -106,4 +107,4 @@ def start(self, kafkaClient, topicName):
         print("[ControlSystemOne] Failed to publish Volt Metrics.")
         print(ex)
 
-threading.Timer(30.0, start(kafkaClient, topicName)).start()
+threading.Timer(30.0, start).start()
