@@ -90,7 +90,16 @@ while True:
 
             with rawVoltageMetricsTopic.get_sync_producer() as producer:
                 jsonModel = json.dumps(model.__dict__)
-                producer.produce(bytes(jsonModel, 'utf-8'))
+
+                print("jsonModel")
+                print(jsonModel)
+
+                jsonBytes = bytes(jsonModel, 'utf-8')
+                
+                print("jsonBytes")
+                print(jsonBytes)
+
+                producer.produce(jsonBytes)
 
     except Exception as ex:
         print("[ControlSystemOne]Failed to publish Volt Metrics.")
