@@ -20,44 +20,37 @@ class RawMetricDto():
     voltage7 = 0
     deviceTime = None
 
+debug=False
 vref = 3.31
 topicName = "raw-voltage-metrics"
 kafkaClient = None
 kafkaProducer = None  
 
 try:
-    print("[ControlSystemOne] Starting Kafka Service.")
-    #conf = {'bootstrap.servers': "walpola.tk:9094", 'client.id': socket.gethostname()}
-    #kafkaClient = KafkaClient(bootstrap_servers='walpola.tk:9094')
-
-    #if kafkaClient is None:
-        #print("[ControlSystemOne] Failed to instantiate Kafka Client.")
-    #else: 
-        # rawVoltageMetricsTopic = kafkaClient._topics.[topicName]
-        
-        # if rawVoltageMetricsTopic is None:
-        #     kafkaClient.topics._create_topic(topicName)
-        #     rawVoltageMetricsTopic = kafkaClient.topics[topicName]
-        
+    if(debug):
+        print("[ControlSystemOne] Starting Kafka Service.")
+    
     kafkaProducer = KafkaProducer(bootstrap_servers='walpola.tk:9094', batch_size=0)  
-        #rawVoltageMetricsTopic.get_sync_producer(ack_timeout_ms=100000, min_queued_messages=1)
-
+    
 except Exception as ex:
-    print("[ControlSystemOne] Failed to connect to Kafka Host.")
-    print(ex)
+    if(debug):
+        print("[ControlSystemOne] Failed to connect to Kafka Host.")
+        print(ex)
 
-# def on_send_success(record_metadata):
-#     print(record_metadata.topic)
-#     print(record_metadata.partition)
-#     print(record_metadata.offset)
+def on_send_success(record_metadata):
+    if(debug):
+        print(record_metadata.topic)
+        print(record_metadata.partition)
+        print(record_metadata.offset)
 
-# def on_send_error(excp):
-#     #log.error('I am an errback', exc_info=excp)
-#     # handle exception
-#     print(excp)
+def on_send_error(excp):
+    if(debug):
+        #log.error('I am an errback', exc_info=excp)
+        # # handle exception
+        print(excp)
 
 def run():
-    threading.Timer(30.0, run).start()
+    threading.Timer(10.0, run).start()
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -91,7 +84,8 @@ def run():
     # Metrics Publisher
     try:
         if kafkaProducer is not None:
-            print("[ControlSystemOne] Starting Voltage Metrics Publish.")
+            if(debug):
+                print("[ControlSystemOne] Starting Voltage Metrics Publish.")
 
             model = RawMetricDto()
 
@@ -107,13 +101,14 @@ def run():
             
             jsonModel = json.dumps(model.__dict__)
             jsonBytes = bytes(jsonModel, 'utf-8')
-            kafkaProducer.send(topicName, jsonBytes)
-            #.add_callback(on_send_success).add_errback(on_send_error)  
+            kafkaProducer.send(topic=topicName, value=jsonBytes).add_callback(on_send_success).add_errback(on_send_error)  
 
-            print("[ControlSystemOne] Metrics Publish Complete.")
+            if(debug):
+                print("[ControlSystemOne] Metrics Publish Complete.")
                 
     except Exception as ex:
-        print("[ControlSystemOne] Failed to publish Volt Metrics.")
-        print(ex)
+        if(debug):
+            print("[ControlSystemOne] Failed to publish Volt Metrics.")
+            print(ex)
 
-run()
+run() 
