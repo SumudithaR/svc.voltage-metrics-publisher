@@ -62,14 +62,37 @@ def on_send_error(excp):
 def getVoltages():
     extractionScheduler.enter(schedulerInterval, 0, getVoltages)
 
-    adc0 = MCP3008(channel=0, device=0)
-    adc1 = MCP3008(channel=1, device=0)
-    adc2 = MCP3008(channel=2, device=0)
-    adc3 = MCP3008(channel=3, device=0)
-    adc4 = MCP3008(channel=4, device=0)
-    adc5 = MCP3008(channel=5, device=0)
-    adc6 = MCP3008(channel=6, device=0)
-    adc7 = MCP3008(channel=7, device=0)
+    adc0 = MCP3008(channel=0)
+    while adc0 is None:
+        adc0 = MCP3008(channel=0)
+    
+    adc1 = MCP3008(channel=1)
+    while adc1 is None:
+        adc1 = MCP3008(channel=0)
+
+    adc2 = MCP3008(channel=2)
+    while adc2 is None:
+        adc2 = MCP3008(channel=0)
+
+    adc3 = MCP3008(channel=3)
+    while adc3 is None:
+        adc3 = MCP3008(channel=0)
+
+    adc4 = MCP3008(channel=4)
+    while adc4 is None:
+        adc4 = MCP3008(channel=0)
+
+    adc5 = MCP3008(channel=5)
+    while adc5 is None:
+        adc5 = MCP3008(channel=0)
+
+    adc6 = MCP3008(channel=6)
+    while adc6 is None:
+        adc6 = MCP3008(channel=0)
+
+    adc7 = MCP3008(channel=7)
+    while adc7 is None:
+        adc7 = MCP3008(channel=0)
 
     # if(adc0 is None or adc1 is None or adc2 is None or adc3 is None or adc4 is None or adc5 is None or adc6 is None or adc7 is None): 
     #     return
