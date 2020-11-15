@@ -30,6 +30,7 @@ topicName = "raw-voltage-metrics"
 kafkaClient = None
 kafkaProducer = None
 fileLock = threading.Lock()
+mcpLock = threading.Lock()
 schedulerInterval = 1
 
 try:
@@ -60,10 +61,12 @@ def on_send_error(excp):
 
 def getDigitalValue(channel):
     try:
+        mcpLock.acquire()
         adc = MCP3008(channel=channel)
+        mcpLock.release()
         return adc
-    except Exception:
-        return getDigitalValue(channel)
+    except Exception as ex:
+        print(ex) 
 
 def getVoltages():
     extractionScheduler.enter(schedulerInterval, 0, getVoltages)
