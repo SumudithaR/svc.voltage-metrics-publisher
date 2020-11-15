@@ -7,7 +7,10 @@ import time
 from gpiozero import MCP3008  # Installed in GAM 13/09/2019.
 from time import sleep       #
 import threading
+import sched
+import time
 #
+
 
 class RawMetricDto():
     voltage0 = 0
@@ -20,22 +23,27 @@ class RawMetricDto():
     voltage7 = 0
     deviceTime = None
 
-debug=False
+
+debug = False
 vref = 3.31
 topicName = "raw-voltage-metrics"
 kafkaClient = None
-kafkaProducer = None  
+kafkaProducer = None
+fileLock = threading.Lock()
+schedulerInterval = 10
 
 try:
     if(debug):
         print("[ControlSystemOne] Starting Kafka Service.")
-    
-    kafkaProducer = KafkaProducer(bootstrap_servers='walpola.tk:9094', batch_size=0)  
-    
+
+    kafkaProducer = KafkaProducer(
+        bootstrap_servers='walpola.tk:9094', batch_size=0)
+
 except Exception as ex:
     if(debug):
         print("[ControlSystemOne] Failed to connect to Kafka Host.")
         print(ex)
+
 
 def on_send_success(record_metadata):
     if(debug):
@@ -43,14 +51,16 @@ def on_send_success(record_metadata):
         print(record_metadata.partition)
         print(record_metadata.offset)
 
+
 def on_send_error(excp):
     if(debug):
         #log.error('I am an errback', exc_info=excp)
         # # handle exception
         print(excp)
 
-def run():
-    threading.Timer(10.0, run).start()
+
+def getVoltages():
+    extractionScheduler.enter(schedulerInterval, 0, getVoltages)
 
     adc0 = MCP3008(channel=0)
     adc1 = MCP3008(channel=1)
@@ -74,12 +84,14 @@ def run():
 
     print("Bat1:", '{:.1f}'.format(voltage0), "V," "Bus:", '{:.1f}'.format(voltage1), "V," "Rou:",
           '{:.1f}'.format(voltage2), "V," "Bat2:", '{:.1f}'.format(voltage3), "V,", localtime)
+    fileLock.acquire()
     fo = open("/Camgam/udin/GampahaLog.txt", "a")
     L1 = ['{:.1f}'.format(voltage0), ",", '{:.1f}'.format(voltage1), ",", '{:.1f}'.format(voltage2), ",", '{:.1f}'.format(voltage3), ",", '{:.1f}'.format(
         voltage4), ",", '{:.1f}'.format(voltage5), ",", '{:.1f}'.format(voltage6), ",", '{:.1f}'.format(voltage7), ",", localtime]
     fo.writelines(L1)
     fo.write('\n')
     fo.close()
+    fileLock.release()
 
     # Metrics Publisher
     try:
@@ -98,17 +110,21 @@ def run():
             model.voltage6 = voltage6  # WTL
             model.voltage7 = voltage7  # WLL
             model.deviceTime = localtime
-            
+
             jsonModel = json.dumps(model.__dict__)
             jsonBytes = bytes(jsonModel, 'utf-8')
-            kafkaProducer.send(topic=topicName, value=jsonBytes).add_callback(on_send_success).add_errback(on_send_error)  
+            kafkaProducer.send(topic=topicName, value=jsonBytes).add_callback(
+                on_send_success).add_errback(on_send_error)
 
             if(debug):
                 print("[ControlSystemOne] Metrics Publish Complete.")
-                
+
     except Exception as ex:
         if(debug):
             print("[ControlSystemOne] Failed to publish Volt Metrics.")
             print(ex)
 
-run() 
+
+extractionScheduler = sched.scheduler(time.time, time.sleep)
+extractionScheduler.enter(schedulerInterval, 0, getVoltages)
+extractionScheduler.run()
