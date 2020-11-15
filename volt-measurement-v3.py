@@ -61,11 +61,9 @@ def on_send_error(excp):
 
 def getDigitalValue(channel):
     try:
-        mcpLock.acquire()
         adc = MCP3008(channel=channel)
         adcValue = adc.value
         adc.close()
-        mcpLock.release()
         return adcValue
     except Exception as ex:
         print(ex) 
