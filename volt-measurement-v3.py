@@ -63,8 +63,10 @@ def getDigitalValue(channel):
     try:
         mcpLock.acquire()
         adc = MCP3008(channel=channel)
+        adcValue = adc.
+        adc.close()
         mcpLock.release()
-        return adc
+        return adcValue
     except Exception as ex:
         print(ex) 
 
