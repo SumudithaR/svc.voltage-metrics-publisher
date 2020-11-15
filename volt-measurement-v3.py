@@ -85,14 +85,14 @@ def getVoltages():
     # if(adc0 is None or adc1 is None or adc2 is None or adc3 is None or adc4 is None or adc5 is None or adc6 is None or adc7 is None): 
     #     return
 
-    voltage0 = vref*4.57*adc0.value  # Battery
-    voltage1 = vref*4.57*adc1.value  # Bus
-    voltage2 = vref*4.57*adc2.value  # Router
-    voltage3 = vref*4.57*adc3.value  # Pi7 Voltage
-    voltage4 = vref*adc4.value  # XX3
-    voltage5 = vref*adc5.value  # XX4
-    voltage6 = vref*adc6.value  # WTL
-    voltage7 = vref*adc7.value  # WLL
+    voltage0 = vref*4.57*adc0  # Battery
+    voltage1 = vref*4.57*adc1  # Bus
+    voltage2 = vref*4.57*adc2  # Router
+    voltage3 = vref*4.57*adc3  # Pi7 Voltage
+    voltage4 = vref*adc4  # XX3
+    voltage5 = vref*adc5  # XX4
+    voltage6 = vref*adc6  # WTL
+    voltage7 = vref*adc7  # WLL
 
     localtime = time.asctime(time.localtime(time.time()))
 
