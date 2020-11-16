@@ -31,7 +31,7 @@ kafkaClient = None
 kafkaProducer = None
 fileLock = threading.Lock()
 mcpLock = threading.Lock()
-schedulerInterval = 10
+schedulerInterval = 30
 
 try:
     if(debug):
