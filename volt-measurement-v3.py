@@ -1,13 +1,13 @@
 #!/usr/bin/python3
-from kafka import KafkaProducer, KafkaClient
-import socket
+from kafka import KafkaProducer
+#import socket
 import json
-import time
+#import time
 # import datetime
 from gpiozero import MCP3008  # Installed in GAM 13/09/2019.
 from time import sleep       #
-import threading
-import sched
+#import threading
+#import sched
 import time
 #
 
@@ -27,10 +27,9 @@ class RawMetricDto():
 debug = False
 vref = 3.31
 topicName = "raw-voltage-metrics"
-kafkaClient = None
 kafkaProducer = None
-fileLock = threading.Lock()
-mcpLock = threading.Lock()
+#fileLock = threading.Lock()
+#mcpLock = threading.Lock()
 schedulerInterval = 30
 
 try:
@@ -46,19 +45,18 @@ except Exception as ex:
         print(ex)
 
 
-def on_send_success(record_metadata):
-    if(debug):
-        print(record_metadata.topic)
-        print(record_metadata.partition)
-        print(record_metadata.offset)
+# def on_send_success(record_metadata):
+#     if(debug):
+#         print(record_metadata.topic)
+#         print(record_metadata.partition)
+#         print(record_metadata.offset)
 
 
-def on_send_error(excp):
-    if(debug):
-        #log.error('I am an errback', exc_info=excp)
-        # # handle exception
-        print(excp)
-
+# def on_send_error(excp):
+#     if(debug):
+#         #log.error('I am an errback', exc_info=excp)
+#         # # handle exception
+#         print(excp)
 def getDigitalValue(channel):
     try:
         adc = MCP3008(channel=channel)
@@ -66,10 +64,10 @@ def getDigitalValue(channel):
         adc.close()
         return adcValue
     except Exception as ex:
-        print(ex) 
+        print(ex)
 
-def getVoltages():
-    extractionScheduler.enter(schedulerInterval, 0, getVoltages)
+
+while True:
 
     adc0 = getDigitalValue(0)
     adc1 = getDigitalValue(1)
@@ -79,33 +77,27 @@ def getVoltages():
     adc5 = getDigitalValue(5)
     adc6 = getDigitalValue(6)
     adc7 = getDigitalValue(7)
-    
-    # if(adc0 is None or adc1 is None or adc2 is None or adc3 is None or adc4 is None or adc5 is None or adc6 is None or adc7 is None): 
-    #     return
 
-    voltage0 = vref*4.57*adc0  # Battery
-    voltage1 = vref*4.57*adc1  # Bus
-    voltage2 = vref*4.57*adc2  # Router
-    voltage3 = vref*4.57*adc3  # Pi7 Voltage
-    voltage4 = vref*adc4  # XX3
-    voltage5 = vref*adc5  # XX4
-    voltage6 = vref*adc6  # WTL
-    voltage7 = vref*adc7  # WLL
+    voltage0 = vref*4.57*adc0.value  # Battery
+    voltage1 = vref*4.57*adc1.value  # Bus
+    voltage2 = vref*4.57*adc2.value  # Router
+    voltage3 = vref*4.57*adc3.value  # Pi7 Voltage
+    voltage4 = vref*adc4.value  # XX3
+    voltage5 = vref*adc5.value  # XX4
+    voltage6 = vref*adc6.value  # WTL
+    voltage7 = vref*adc7.value  # WLL
 
     localtime = time.asctime(time.localtime(time.time()))
 
     print("Bat1:", '{:.1f}'.format(voltage0), "V," "Bus:", '{:.1f}'.format(voltage1), "V," "Rou:",
           '{:.1f}'.format(voltage2), "V," "Bat2:", '{:.1f}'.format(voltage3), "V,", localtime)
-    fileLock.acquire()
     fo = open("/Camgam/udin/GampahaLog.txt", "a")
     L1 = ['{:.1f}'.format(voltage0), ",", '{:.1f}'.format(voltage1), ",", '{:.1f}'.format(voltage2), ",", '{:.1f}'.format(voltage3), ",", '{:.1f}'.format(
         voltage4), ",", '{:.1f}'.format(voltage5), ",", '{:.1f}'.format(voltage6), ",", '{:.1f}'.format(voltage7), ",", localtime]
     fo.writelines(L1)
     fo.write('\n')
     fo.close()
-    fileLock.release()
 
-    # Metrics Publisher
     try:
         if kafkaProducer is not None:
             if(debug):
@@ -125,8 +117,8 @@ def getVoltages():
 
             jsonModel = json.dumps(model.__dict__)
             jsonBytes = bytes(jsonModel, 'utf-8')
-            kafkaProducer.send(topic=topicName, value=jsonBytes).add_callback(
-                on_send_success).add_errback(on_send_error)
+            # .add_callback(on_send_success).add_errback(on_send_error)
+            kafkaProducer.send(topic=topicName, value=jsonBytes)
 
             if(debug):
                 print("[ControlSystemOne] Metrics Publish Complete.")
@@ -136,7 +128,16 @@ def getVoltages():
             print("[ControlSystemOne] Failed to publish Volt Metrics.")
             print(ex)
 
+    sleep(30)
 
-extractionScheduler = sched.scheduler(time.time, time.sleep)
-extractionScheduler.enter(schedulerInterval, 0, getVoltages)
-extractionScheduler.run()
+
+# def getVoltages():
+#     extractionScheduler.enter(schedulerInterval, 0, getVoltages)
+
+    # if(adc0 is None or adc1 is None or adc2 is None or adc3 is None or adc4 is None or adc5 is None or adc6 is None or adc7 is None):
+    #     return
+
+
+# extractionScheduler = sched.scheduler(time.time, time.sleep)
+# extractionScheduler.enter(schedulerInterval, 0, getVoltages)
+# extractionScheduler.run()
